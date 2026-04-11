@@ -23,16 +23,7 @@ export default function UsersPage() {
   useEffect(() => { load(page) }, [page])
 
   async function handleAction(type, user) {
-    if (type === 'delete') {
-      setConfirm({ type, user })
-    } else if (type === 'toggleAdmin') {
-      try {
-        await api.put(`/admin/users/${user.id}/admin`)
-        load(page)
-      } catch (e) {
-        alert(e.response?.data?.error || '처리 실패')
-      }
-    }
+    if (type === 'delete') setConfirm({ type, user })
   }
 
   async function confirmAction() {
@@ -52,11 +43,6 @@ export default function UsersPage() {
     { key: 'phone',    label: '전화번호' },
     { key: 'region',   label: '지역' },
     {
-      key: 'isAdmin',
-      label: '권한',
-      render: (v) => <Badge label={v ? '관리자' : '일반'} variant={v ? 'info' : 'gray'} />,
-    },
-    {
       key: 'createdAt',
       label: '가입일',
       render: (v) => v?.slice(0, 10),
@@ -65,20 +51,12 @@ export default function UsersPage() {
       key: '_actions',
       label: '액션',
       render: (_, row, onAction) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => onAction('toggleAdmin', row)}
-            className="px-2.5 py-1 text-xs rounded border border-blue-300 text-blue-600 hover:bg-blue-50 transition-colors"
-          >
-            {row.isAdmin ? '관리자 해제' : '관리자 설정'}
-          </button>
-          <button
-            onClick={() => onAction('delete', row)}
-            className="px-2.5 py-1 text-xs rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
-          >
-            삭제
-          </button>
-        </div>
+        <button
+          onClick={() => onAction('delete', row)}
+          className="px-2.5 py-1 text-xs rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+        >
+          삭제
+        </button>
       ),
     },
   ]

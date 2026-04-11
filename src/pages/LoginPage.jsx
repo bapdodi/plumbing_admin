@@ -14,16 +14,11 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const res = await api.post('/auth/login', { username, password })
-      const { token } = res.data.data
+      // 관리자 전용 로그인 엔드포인트
+      const res = await api.post('/admin/auth/login', { username, password })
+      const { token, name } = res.data.data
       localStorage.setItem('admin_token', token)
-
-      // Verify admin status (403 if not admin, handled by interceptor)
-      await api.get('/admin/stats')
-
-      // Fetch profile
-      const me = await api.get('/users/me')
-      localStorage.setItem('admin_user', JSON.stringify({ name: me.data.data.name }))
+      localStorage.setItem('admin_user', JSON.stringify({ name }))
 
       navigate('/', { replace: true })
     } catch (err) {
