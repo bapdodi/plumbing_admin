@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+// 개발: Vite proxy(/api → localhost:8080)
+// 프로덕션: VITE_API_URL 환경변수 (예: https://api.example.com/api)
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
 })
 
 api.interceptors.request.use((config) => {
