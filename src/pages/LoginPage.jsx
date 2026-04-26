@@ -4,7 +4,7 @@ import api from '../api/client'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -14,8 +14,7 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      // 관리자 전용 로그인 엔드포인트
-      const res = await api.post('/admin/auth/login', { username, password })
+      const res = await api.post('/auth/login', { email, password })
       const { token, name } = res.data.data
       localStorage.setItem('admin_token', token)
       localStorage.setItem('admin_user', JSON.stringify({ name }))
@@ -42,14 +41,15 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">아이디</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="username email"
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="아이디를 입력하세요"
+              placeholder="이메일을 입력하세요"
             />
           </div>
           <div>
@@ -59,6 +59,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="비밀번호를 입력하세요"
             />

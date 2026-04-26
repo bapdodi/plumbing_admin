@@ -48,6 +48,12 @@ export default function DashboardPage() {
           color={stats?.pendingBuildings > 0 ? 'text-warning' : 'text-primary'}
         />
         <StatCard
+          label="승인 대기 동(도면)"
+          value={stats?.pendingDongs}
+          to="/dongs"
+          color={stats?.pendingDongs > 0 ? 'text-warning' : 'text-primary'}
+        />
+        <StatCard
           label="미처리 신고"
           value={stats?.pendingReports}
           to="/reports"

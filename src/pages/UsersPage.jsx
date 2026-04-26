@@ -38,8 +38,8 @@ export default function UsersPage() {
   }
 
   const columns = [
-    { key: 'name',     label: '이름' },
-    { key: 'username', label: '아이디' },
+    { key: 'name',     label: '이름/상호명' },
+    { key: 'email',    label: '이메일' },
     { key: 'phone',    label: '전화번호' },
     { key: 'region',   label: '지역' },
     {

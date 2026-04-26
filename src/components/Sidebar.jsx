@@ -7,6 +7,7 @@ const NAV = [
   { to: '/posts',    label: '게시글 관리', icon: '📝' },
   { to: '/vendors',  label: '업체 승인',   icon: '🏪' },
   { to: '/buildings',label: '건물 승인',   icon: '🏢' },
+  { to: '/dongs',    label: '동(평면도) 승인',icon: '🏗️' },
   { to: '/reports',  label: '신고 처리',   icon: '🚨' },
 ]
 

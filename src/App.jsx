@@ -7,6 +7,7 @@ import JobsPage from './pages/JobsPage'
 import PostsPage from './pages/PostsPage'
 import VendorsPage from './pages/VendorsPage'
 import BuildingsPage from './pages/BuildingsPage'
+import DongsPage from './pages/DongsPage'
 import ReportsPage from './pages/ReportsPage'
 
 function RequireAuth({ children }) {
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="posts" element={<PostsPage />} />
           <Route path="vendors" element={<VendorsPage />} />
           <Route path="buildings" element={<BuildingsPage />} />
+          <Route path="dongs" element={<DongsPage />} />
           <Route path="reports" element={<ReportsPage />} />
         </Route>
       </Routes>
