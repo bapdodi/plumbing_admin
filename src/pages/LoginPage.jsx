@@ -15,8 +15,9 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const res = await api.post('/auth/login', { email, password })
-      const { token, name } = res.data.data
+      const { token, refreshToken, name } = res.data.data
       localStorage.setItem('admin_token', token)
+      if (refreshToken) localStorage.setItem('admin_refresh_token', refreshToken)
       localStorage.setItem('admin_user', JSON.stringify({ name }))
 
       navigate('/', { replace: true })
@@ -24,6 +25,7 @@ export default function LoginPage() {
       const msg = err.response?.data?.error || err.message || '로그인에 실패했습니다.'
       setError(msg)
       localStorage.removeItem('admin_token')
+      localStorage.removeItem('admin_refresh_token')
       localStorage.removeItem('admin_user')
     } finally {
       setLoading(false)

@@ -1,11 +1,17 @@
 import { Outlet, useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
+import api from '../api/client'
 
 export default function Layout() {
   const navigate = useNavigate()
 
-  function handleLogout() {
+  async function handleLogout() {
+    const refreshToken = localStorage.getItem('admin_refresh_token')
+    if (refreshToken) {
+      try { await api.post('/auth/logout', { refreshToken }) } catch (_) {}
+    }
     localStorage.removeItem('admin_token')
+    localStorage.removeItem('admin_refresh_token')
     localStorage.removeItem('admin_user')
     navigate('/login')
   }

@@ -12,11 +12,59 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+let refreshInFlight = null
+
+async function refreshAccessToken() {
+  if (refreshInFlight) return refreshInFlight
+  const refreshToken = localStorage.getItem('admin_refresh_token')
+  if (!refreshToken) return null
+
+  refreshInFlight = axios
+    .post(
+      `${api.defaults.baseURL}/auth/refresh`,
+      { refreshToken },
+      { headers: { 'Content-Type': 'application/json' } },
+    )
+    .then((res) => {
+      const data = res.data?.data || {}
+      if (data.token) localStorage.setItem('admin_token', data.token)
+      if (data.refreshToken) localStorage.setItem('admin_refresh_token', data.refreshToken)
+      return data.token || null
+    })
+    .catch(() => {
+      localStorage.removeItem('admin_token')
+      localStorage.removeItem('admin_refresh_token')
+      return null
+    })
+    .finally(() => {
+      refreshInFlight = null
+    })
+
+  return refreshInFlight
+}
+
 api.interceptors.response.use(
   (res) => res,
-  (err) => {
-    if (err.response?.status === 401 || err.response?.status === 403) {
+  async (err) => {
+    const status = err.response?.status
+    const original = err.config
+    const isAuthCall = original?.url?.includes('/auth/login') ||
+                       original?.url?.includes('/auth/refresh') ||
+                       original?.url?.includes('/auth/logout')
+
+    if ((status === 401 || status === 403) && !original._retried && !isAuthCall) {
+      original._retried = true
+      const newToken = await refreshAccessToken()
+      if (newToken) {
+        original.headers = original.headers || {}
+        original.headers.Authorization = `Bearer ${newToken}`
+        return api.request(original)
+      }
+    }
+
+    if (status === 401 || status === 403) {
       localStorage.removeItem('admin_token')
+      localStorage.removeItem('admin_refresh_token')
       localStorage.removeItem('admin_user')
       window.location.href = '/login'
     }

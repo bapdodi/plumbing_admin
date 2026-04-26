@@ -5,14 +5,12 @@ import Badge from '../components/Badge'
 
 export default function BuildingsPage() {
   const [buildings, setBuildings] = useState(null)
-  const [filter, setFilter] = useState('false')
   const [error, setError] = useState('')
   const [selectedBuilding, setSelectedBuilding] = useState(null)
 
   async function load() {
     try {
-      const params = filter !== '' ? { approved: filter } : {}
-      const r = await api.get('/admin/buildings', { params })
+      const r = await api.get('/admin/buildings')
       setBuildings(r.data.data)
       setError('')
     } catch (e) {
@@ -20,34 +18,21 @@ export default function BuildingsPage() {
     }
   }
 
-  useEffect(() => { load() }, [filter])
+  useEffect(() => { load() }, [])
 
-  async function approve(id) {
+  async function remove(id) {
+    if (!window.confirm('정말로 이 건물을 삭제하시겠습니까? 관련 동 정보도 모두 삭제됩니다.')) return
     try {
-      await api.put(`/admin/buildings/${id}/approve`)
+      await api.delete(`/admin/buildings/${id}`)
       load()
     } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
-    }
-  }
-
-  async function reject(id) {
-    try {
-      await api.put(`/admin/buildings/${id}/reject`)
-      load()
-    } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
+      alert(e.response?.data?.error || '삭제 실패')
     }
   }
 
   const columns = [
     { key: 'name',    label: '건물명' },
     { key: 'address', label: '주소', render: (v) => <span className="max-w-xs block truncate">{v}</span> },
-    {
-      key: 'approved',
-      label: '상태',
-      render: (v) => <Badge label={v ? '승인됨' : '대기중'} variant={v ? 'success' : 'warning'} />,
-    },
     { key: 'createdAt', label: '등록일', render: (v) => v?.slice(0, 10) },
     {
       key: '_actions',
@@ -60,22 +45,12 @@ export default function BuildingsPage() {
           >
             상세 보기
           </button>
-          {!row.approved && (
-            <button
-              onClick={() => approve(row.id)}
-              className="px-2.5 py-1 text-xs rounded border border-green-400 text-green-600 hover:bg-green-50 transition-colors"
-            >
-              승인
-            </button>
-          )}
-          {row.approved && (
-            <button
-              onClick={() => reject(row.id)}
-              className="px-2.5 py-1 text-xs rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
-            >
-              승인 취소
-            </button>
-          )}
+          <button
+            onClick={() => remove(row.id)}
+            className="px-2.5 py-1 text-xs rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+          >
+            삭제
+          </button>
         </div>
       ),
     },
@@ -84,26 +59,7 @@ export default function BuildingsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">건물 승인</h1>
-        <div className="flex gap-2">
-          {[
-            { value: 'false', label: '대기중' },
-            { value: 'true',  label: '승인됨' },
-            { value: '',      label: '전체' },
-          ].map(({ value, label }) => (
-            <button
-              key={value}
-              onClick={() => setFilter(value)}
-              className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
-                filter === value
-                  ? 'bg-primary text-white border-primary'
-                  : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <h1 className="text-xl font-bold text-gray-900">건물 관리</h1>
       </div>
 
       {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
@@ -167,14 +123,6 @@ export default function BuildingsPage() {
             </div>
             
             <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-xl">
-              {!selectedBuilding.approved && (
-                <button
-                  onClick={() => { approve(selectedBuilding.id); setSelectedBuilding(null); }}
-                  className="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium transition-colors"
-                >
-                  건물 승인하기
-                </button>
-              )}
               <button
                 onClick={() => setSelectedBuilding(null)}
                 className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"

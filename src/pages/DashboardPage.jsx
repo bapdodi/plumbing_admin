@@ -42,12 +42,6 @@ export default function DashboardPage() {
           color={stats?.pendingVendors > 0 ? 'text-warning' : 'text-primary'}
         />
         <StatCard
-          label="승인 대기 건물"
-          value={stats?.pendingBuildings}
-          to="/buildings"
-          color={stats?.pendingBuildings > 0 ? 'text-warning' : 'text-primary'}
-        />
-        <StatCard
           label="승인 대기 동(도면)"
           value={stats?.pendingDongs}
           to="/dongs"
