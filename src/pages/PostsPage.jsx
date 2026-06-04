@@ -5,7 +5,10 @@ import Badge from '../components/Badge'
 import ConfirmDialog from '../components/ConfirmDialog'
 
 const CATEGORY_LABELS = {
-  tips: '팁', questions: '질문', notices: '공지', free: '자유',
+  // 앱이 저장하는 단수형 (PostCategory.name)
+  tip: '팁', question: '질문', notice: '공지', free: '자유',
+  // 하위호환: 혹시 복수형으로 저장된 데이터 대비
+  tips: '팁', questions: '질문', notices: '공지',
 }
 
 export default function PostsPage() {
