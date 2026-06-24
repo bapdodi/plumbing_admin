@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../api/client'
 import { Table } from '../components/Table'
 import Badge from '../components/Badge'
+import AuthImage from '../components/AuthImage'
 
 export default function DongsPage() {
   const [dongs, setDongs] = useState(null)
@@ -50,9 +51,13 @@ export default function DongsPage() {
       ) : (
         <div className="flex gap-1">
           {urls.map((url, i) => (
-            <a key={i} href={url} target="_blank" rel="noreferrer">
-              <img src={url} alt="" className="w-10 h-10 object-cover rounded border border-gray-200 hover:opacity-80" />
-            </a>
+            <AuthImage
+              key={i}
+              src={url}
+              alt=""
+              openOnClick
+              className="w-10 h-10 object-cover rounded border border-gray-200 hover:opacity-80"
+            />
           ))}
         </div>
       ),

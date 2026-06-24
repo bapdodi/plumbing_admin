@@ -48,6 +48,8 @@ api.interceptors.response.use(
   async (err) => {
     const status = err.response?.status
     const original = err.config
+    // 권한 검증 등 호출부에서 직접 처리하려는 요청은 자동 갱신/로그아웃을 건너뛴다.
+    if (original?._skipAuthHandling) return Promise.reject(err)
     const isAuthCall = original?.url?.includes('/auth/login') ||
                        original?.url?.includes('/auth/refresh') ||
                        original?.url?.includes('/auth/logout')

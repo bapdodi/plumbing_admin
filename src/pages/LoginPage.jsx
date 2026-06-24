@@ -16,6 +16,24 @@ export default function LoginPage() {
     try {
       const res = await api.post('/auth/login', { email, password })
       const { token, refreshToken, name } = res.data.data
+
+      // 로그인 자체는 일반 유저도 성공한다(권한 검사는 /admin/** 에서만).
+      // 관리자 전용 API로 권한을 확인하고, 없으면 로그인 단계에서 막는다.
+      // (_skipAuthHandling: 인터셉터의 자동 토큰삭제·리다이렉트를 우회)
+      try {
+        await api.get('/admin/stats', {
+          headers: { Authorization: `Bearer ${token}` },
+          _skipAuthHandling: true,
+        })
+      } catch (permErr) {
+        const s = permErr.response?.status
+        if (s === 401 || s === 403) {
+          setError('관리자 권한이 없는 계정입니다.')
+          return
+        }
+        throw permErr
+      }
+
       localStorage.setItem('admin_token', token)
       if (refreshToken) localStorage.setItem('admin_refresh_token', refreshToken)
       localStorage.setItem('admin_user', JSON.stringify({ name }))

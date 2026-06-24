@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import api from '../api/client'
 import { Table } from '../components/Table'
 import Badge from '../components/Badge'
+import AuthImage from '../components/AuthImage'
 
 export default function BuildingsPage() {
   const [buildings, setBuildings] = useState(null)
@@ -106,12 +107,18 @@ export default function BuildingsPage() {
                         ) : (
                           <div className="flex flex-wrap gap-3">
                             {dong.imageUrls.map((url, idx) => (
-                              <a key={idx} href={url} target="_blank" rel="noreferrer" className="block relative group">
-                                <img src={url} alt={`${dong.name} 도면 ${idx + 1}`} className="w-32 h-32 object-cover rounded-md border border-gray-300" />
+                              <AuthImage
+                                key={idx}
+                                src={url}
+                                alt={`${dong.name} 도면 ${idx + 1}`}
+                                openOnClick
+                                anchorClassName="block relative group"
+                                className="w-32 h-32 object-cover rounded-md border border-gray-300"
+                              >
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-md flex items-center justify-center">
                                   <span className="text-white opacity-0 group-hover:opacity-100 text-xs font-medium drop-shadow-md">크게 보기</span>
                                 </div>
-                              </a>
+                              </AuthImage>
                             ))}
                           </div>
                         )}
