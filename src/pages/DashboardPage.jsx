@@ -53,6 +53,12 @@ export default function DashboardPage() {
           to="/reports"
           color={stats?.pendingReports > 0 ? 'text-danger' : 'text-primary'}
         />
+        <StatCard
+          label="답변 대기 문의"
+          value={stats?.pendingInquiries}
+          to="/inquiries"
+          color={stats?.pendingInquiries > 0 ? 'text-warning' : 'text-primary'}
+        />
       </div>
     </div>
   )

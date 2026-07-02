@@ -9,6 +9,7 @@ const NAV = [
   { to: '/buildings',label: '건물 승인',   icon: '🏢' },
   { to: '/dongs',    label: '동(평면도) 승인',icon: '🏗️' },
   { to: '/reports',  label: '신고 처리',   icon: '🚨' },
+  { to: '/inquiries',label: '문의 관리',   icon: '💬' },
 ]
 
 export default function Sidebar() {
