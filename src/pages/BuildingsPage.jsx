@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import api from '../api/client'
-import { Table } from '../components/Table'
+import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 import AuthImage from '../components/AuthImage'
 
 export default function BuildingsPage() {
   const [buildings, setBuildings] = useState(null)
+  const [page, setPage] = useState(0)
   const [error, setError] = useState('')
   const [selectedBuilding, setSelectedBuilding] = useState(null)
 
-  async function load() {
+  async function load(p = page) {
     try {
-      const r = await api.get('/admin/buildings')
+      const r = await api.get('/admin/buildings', { params: { page: p, size: 20 } })
       setBuildings(r.data.data)
       setError('')
     } catch (e) {
@@ -19,13 +20,13 @@ export default function BuildingsPage() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load(page) }, [page])
 
   async function remove(id) {
     if (!window.confirm('정말로 이 건물을 삭제하시겠습니까? 관련 동 정보도 모두 삭제됩니다.')) return
     try {
       await api.delete(`/admin/buildings/${id}`)
-      load()
+      load(page)
     } catch (e) {
       alert(e.response?.data?.error || '삭제 실패')
     }
@@ -67,7 +68,11 @@ export default function BuildingsPage() {
       {!buildings ? (
         <div className="text-center py-12 text-gray-400">로딩 중...</div>
       ) : (
-        <Table columns={columns} rows={buildings} />
+        <>
+          <Table columns={columns} rows={buildings} />
+          {/* 응답이 배열이라 전체 건수를 알 수 없어, 받은 행이 size 미만이면 다음 페이지를 비활성화한다. */}
+          <Pagination page={page} totalPages={page + (buildings.length === 20 ? 2 : 1)} onChange={setPage} />
+        </>
       )}
 
       {selectedBuilding && (

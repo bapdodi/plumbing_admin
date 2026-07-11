@@ -82,8 +82,7 @@ export default function InquiriesPage() {
     }
   }
 
-  useEffect(() => { setPage(0); load(0) }, [filter])
-  useEffect(() => { load(page) }, [page])
+  useEffect(() => { load(page) }, [filter, page])
 
   async function submitReply(reply) {
     try {
@@ -138,7 +137,7 @@ export default function InquiriesPage() {
           ].map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setFilter(value)}
+              onClick={() => { setFilter(value); setPage(0) }}
               className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                 filter === value
                   ? 'bg-primary text-white border-primary'

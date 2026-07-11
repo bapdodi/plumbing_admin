@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import api from '../api/client'
-import { Table } from '../components/Table'
+import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 
 export default function VendorsPage() {
   const [vendors, setVendors] = useState(null)
+  const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('false') // 'false' = pending, 'true' = approved, '' = all
   const [error, setError] = useState('')
 
-  async function load() {
+  async function load(p = page) {
     try {
-      const params = filter !== '' ? { approved: filter } : {}
+      const params = { page: p, size: 20 }
+      if (filter !== '') params.approved = filter
       const r = await api.get('/admin/vendors', { params })
       setVendors(r.data.data)
       setError('')
@@ -19,12 +21,12 @@ export default function VendorsPage() {
     }
   }
 
-  useEffect(() => { load() }, [filter])
+  useEffect(() => { load(page) }, [filter, page])
 
   async function approve(id) {
     try {
       await api.put(`/admin/vendors/${id}/approve`)
-      load()
+      load(page)
     } catch (e) {
       alert(e.response?.data?.error || '처리 실패')
     }
@@ -33,7 +35,7 @@ export default function VendorsPage() {
   async function reject(id) {
     try {
       await api.put(`/admin/vendors/${id}/reject`)
-      load()
+      load(page)
     } catch (e) {
       alert(e.response?.data?.error || '처리 실패')
     }
@@ -92,7 +94,7 @@ export default function VendorsPage() {
           ].map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setFilter(value)}
+              onClick={() => { setFilter(value); setPage(0) }}
               className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                 filter === value
                   ? 'bg-primary text-white border-primary'
@@ -109,7 +111,11 @@ export default function VendorsPage() {
       {!vendors ? (
         <div className="text-center py-12 text-gray-400">로딩 중...</div>
       ) : (
-        <Table columns={columns} rows={vendors} />
+        <>
+          <Table columns={columns} rows={vendors} />
+          {/* 응답이 배열이라 전체 건수를 알 수 없어, 받은 행이 size 미만이면 다음 페이지를 비활성화한다. */}
+          <Pagination page={page} totalPages={page + (vendors.length === 20 ? 2 : 1)} onChange={setPage} />
+        </>
       )}
     </div>
   )
