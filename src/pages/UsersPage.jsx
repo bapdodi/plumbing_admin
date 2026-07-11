@@ -1,26 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 import ConfirmDialog from '../components/ConfirmDialog'
 
 export default function UsersPage() {
-  const [data, setData] = useState(null)
   const [page, setPage] = useState(0)
   const [confirm, setConfirm] = useState(null) // { type, user }
-  const [error, setError] = useState('')
-
-  async function load(p = page) {
-    try {
-      const r = await api.get('/admin/users', { params: { page: p, size: 20 } })
-      setData(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [page])
+  const { data, error, reload } = useAdminList('/admin/users', { page, size: 20 })
 
   async function handleAction(type, user) {
     if (type === 'delete') setConfirm({ type, user })
@@ -28,12 +16,8 @@ export default function UsersPage() {
 
   async function confirmAction() {
     if (!confirm) return
-    try {
-      await api.delete(`/admin/users/${confirm.user.id}`)
+    if (await runAction(() => api.delete(`/admin/users/${confirm.user.id}`), reload, '삭제 실패')) {
       setConfirm(null)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '삭제 실패')
     }
   }
 

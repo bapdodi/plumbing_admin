@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -11,34 +12,17 @@ const STATUS_VARIANTS = { open: 'success', done: 'gray' }
 const TYPE_LABELS = { workRequest: '일감 요청', workerAvailable: '인력 제공' }
 
 export default function JobsPage() {
-  const [data, setData] = useState(null)
   const [page, setPage] = useState(0)
   const [confirm, setConfirm] = useState(null)
-  const [error, setError] = useState('')
-
-  async function load(p = page) {
-    try {
-      const r = await api.get('/admin/jobs', { params: { page: p, size: 20 } })
-      setData(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [page])
+  const { data, error, reload } = useAdminList('/admin/jobs', { page, size: 20 })
 
   async function handleAction(type, job) {
     if (type === 'delete') setConfirm({ type, job })
   }
 
   async function confirmAction() {
-    try {
-      await api.delete(`/admin/jobs/${confirm.job.id}`)
+    if (await runAction(() => api.delete(`/admin/jobs/${confirm.job.id}`), reload, '삭제 실패')) {
       setConfirm(null)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '삭제 실패')
     }
   }
 

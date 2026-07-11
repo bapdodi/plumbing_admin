@@ -1,45 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 
 export default function VendorsPage() {
-  const [vendors, setVendors] = useState(null)
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('false') // 'false' = pending, 'true' = approved, '' = all
-  const [error, setError] = useState('')
+  const { data: vendors, error, reload } = useAdminList('/admin/vendors', {
+    page, size: 20, ...(filter !== '' && { approved: filter }),
+  })
 
-  async function load(p = page) {
-    try {
-      const params = { page: p, size: 20 }
-      if (filter !== '') params.approved = filter
-      const r = await api.get('/admin/vendors', { params })
-      setVendors(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [filter, page])
-
-  async function approve(id) {
-    try {
-      await api.put(`/admin/vendors/${id}/approve`)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
-    }
-  }
-
-  async function reject(id) {
-    try {
-      await api.put(`/admin/vendors/${id}/reject`)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
-    }
-  }
+  const approve = (id) => runAction(() => api.put(`/admin/vendors/${id}/approve`), reload)
+  const reject = (id) => runAction(() => api.put(`/admin/vendors/${id}/reject`), reload)
 
   const columns = [
     { key: 'name',    label: '업체명' },

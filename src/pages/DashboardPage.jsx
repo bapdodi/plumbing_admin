@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../api/client'
+import { useAdminList } from '../hooks/useAdminList'
 
 function StatCard({ label, value, to, color = 'text-primary' }) {
   const navigate = useNavigate()
@@ -16,14 +15,7 @@ function StatCard({ label, value, to, color = 'text-primary' }) {
 }
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState(null)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    api.get('/admin/stats')
-      .then((r) => setStats(r.data.data))
-      .catch((e) => setError(e.response?.data?.error || '통계 로드 실패'))
-  }, [])
+  const { data: stats, error } = useAdminList('/admin/stats')
 
   if (error) return <div className="text-red-500 text-sm">{error}</div>
 

@@ -1,35 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 import AuthImage from '../components/AuthImage'
 
 export default function BuildingsPage() {
-  const [buildings, setBuildings] = useState(null)
   const [page, setPage] = useState(0)
-  const [error, setError] = useState('')
   const [selectedBuilding, setSelectedBuilding] = useState(null)
-
-  async function load(p = page) {
-    try {
-      const r = await api.get('/admin/buildings', { params: { page: p, size: 20 } })
-      setBuildings(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [page])
+  const { data: buildings, error, reload } = useAdminList('/admin/buildings', { page, size: 20 })
 
   async function remove(id) {
     if (!window.confirm('정말로 이 건물을 삭제하시겠습니까? 관련 동 정보도 모두 삭제됩니다.')) return
-    try {
-      await api.delete(`/admin/buildings/${id}`)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '삭제 실패')
-    }
+    runAction(() => api.delete(`/admin/buildings/${id}`), reload, '삭제 실패')
   }
 
   const columns = [

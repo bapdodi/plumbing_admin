@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -12,34 +13,17 @@ const CATEGORY_LABELS = {
 }
 
 export default function PostsPage() {
-  const [data, setData] = useState(null)
   const [page, setPage] = useState(0)
   const [confirm, setConfirm] = useState(null)
-  const [error, setError] = useState('')
-
-  async function load(p = page) {
-    try {
-      const r = await api.get('/admin/posts', { params: { page: p, size: 20 } })
-      setData(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [page])
+  const { data, error, reload } = useAdminList('/admin/posts', { page, size: 20 })
 
   async function handleAction(type, post) {
     if (type === 'delete') setConfirm({ type, post })
   }
 
   async function confirmAction() {
-    try {
-      await api.delete(`/admin/posts/${confirm.post.id}`)
+    if (await runAction(() => api.delete(`/admin/posts/${confirm.post.id}`), reload, '삭제 실패')) {
       setConfirm(null)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '삭제 실패')
     }
   }
 

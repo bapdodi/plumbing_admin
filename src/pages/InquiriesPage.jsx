@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 
@@ -64,33 +65,16 @@ function ReplyDialog({ inquiry, onSubmit, onCancel }) {
 }
 
 export default function InquiriesPage() {
-  const [data, setData] = useState(null)
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('PENDING')
-  const [error, setError] = useState('')
   const [replying, setReplying] = useState(null)
-
-  async function load(p = page) {
-    try {
-      const params = { page: p, size: 20 }
-      if (filter) params.status = filter
-      const r = await api.get('/admin/inquiries', { params })
-      setData(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [filter, page])
+  const { data, error, reload } = useAdminList('/admin/inquiries', {
+    page, size: 20, ...(filter && { status: filter }),
+  })
 
   async function submitReply(reply) {
-    try {
-      await api.put(`/admin/inquiries/${replying.id}/answer`, { reply })
+    if (await runAction(() => api.put(`/admin/inquiries/${replying.id}/answer`, { reply }), reload, '답변 등록 실패')) {
       setReplying(null)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '답변 등록 실패')
     }
   }
 

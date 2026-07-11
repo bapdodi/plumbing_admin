@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 
@@ -24,33 +25,14 @@ const STATUS_LABELS = {
 }
 
 export default function ReportsPage() {
-  const [data, setData] = useState(null)
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('PENDING')
-  const [error, setError] = useState('')
+  const { data, error, reload } = useAdminList('/admin/reports', {
+    page, size: 20, ...(filter && { status: filter }),
+  })
 
-  async function load(p = page) {
-    try {
-      const params = { page: p, size: 20 }
-      if (filter) params.status = filter
-      const r = await api.get('/admin/reports', { params })
-      setData(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [filter, page])
-
-  async function handleAction(type, report) {
-    try {
-      await api.put(`/admin/reports/${report.id}/${type}`)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
-    }
-  }
+  const handleAction = (type, report) =>
+    runAction(() => api.put(`/admin/reports/${report.id}/${type}`), reload)
 
   const columns = [
     { key: 'reporterName', label: '신고자' },

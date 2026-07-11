@@ -1,46 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import api from '../api/client'
+import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
 import AuthImage from '../components/AuthImage'
 
 export default function DongsPage() {
-  const [dongs, setDongs] = useState(null)
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('false')
-  const [error, setError] = useState('')
+  const { data: dongs, error, reload } = useAdminList('/admin/dongs', {
+    page, size: 20, ...(filter !== '' && { approved: filter }),
+  })
 
-  async function load(p = page) {
-    try {
-      const params = { page: p, size: 20 }
-      if (filter !== '') params.approved = filter
-      const r = await api.get('/admin/dongs', { params })
-      setDongs(r.data.data)
-      setError('')
-    } catch (e) {
-      setError(e.response?.data?.error || '불러오기 실패')
-    }
-  }
-
-  useEffect(() => { load(page) }, [filter, page])
-
-  async function approve(id) {
-    try {
-      await api.put(`/admin/dongs/${id}/approve`)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
-    }
-  }
-
-  async function reject(id) {
-    try {
-      await api.put(`/admin/dongs/${id}/reject`)
-      load(page)
-    } catch (e) {
-      alert(e.response?.data?.error || '처리 실패')
-    }
-  }
+  const approve = (id) => runAction(() => api.put(`/admin/dongs/${id}/approve`), reload)
+  const reject = (id) => runAction(() => api.put(`/admin/dongs/${id}/reject`), reload)
 
   const columns = [
     { key: 'buildingName', label: '건물명' },
