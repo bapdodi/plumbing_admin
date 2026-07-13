@@ -10,13 +10,14 @@ const NAV = [
   { to: '/dongs',    label: '동(평면도) 승인',icon: '🏗️' },
   { to: '/reports',  label: '신고 처리',   icon: '🚨' },
   { to: '/inquiries',label: '문의 관리',   icon: '💬' },
+  { to: '/blocks',   label: '차단 관리',   icon: '🚫' },
 ]
 
 export default function Sidebar() {
   return (
     <aside className="w-56 bg-primary text-white flex flex-col shrink-0">
       <div className="px-5 py-5 border-b border-blue-700">
-        <div className="text-lg font-bold leading-tight">배관일감</div>
+        <div className="text-lg font-bold leading-tight">설비구함</div>
         <div className="text-xs text-blue-200 mt-0.5">관리자</div>
       </div>
       <nav className="flex-1 py-4">

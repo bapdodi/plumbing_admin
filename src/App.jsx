@@ -10,6 +10,7 @@ import BuildingsPage from './pages/BuildingsPage'
 import DongsPage from './pages/DongsPage'
 import ReportsPage from './pages/ReportsPage'
 import InquiriesPage from './pages/InquiriesPage'
+import BlocksPage from './pages/BlocksPage'
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem('admin_token')
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="dongs" element={<DongsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="inquiries" element={<InquiriesPage />} />
+          <Route path="blocks" element={<BlocksPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
