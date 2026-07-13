@@ -11,6 +11,7 @@ const NAV = [
   { to: '/reports',  label: '신고 처리',   icon: '🚨' },
   { to: '/inquiries',label: '문의 관리',   icon: '💬' },
   { to: '/blocks',   label: '차단 관리',   icon: '🚫' },
+  { to: '/app-version', label: '앱 버전 관리', icon: '📱' },
 ]
 
 export default function Sidebar() {
