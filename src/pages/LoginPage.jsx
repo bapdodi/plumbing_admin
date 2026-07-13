@@ -55,7 +55,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="text-3xl mb-2">🔧</div>
-          <h1 className="text-xl font-bold text-gray-900">배관일감 관리자</h1>
+          <h1 className="text-xl font-bold text-gray-900">설비구함 관리자</h1>
           <p className="text-sm text-gray-500 mt-1">관리자 계정으로 로그인하세요</p>
         </div>
 

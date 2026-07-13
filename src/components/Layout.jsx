@@ -24,7 +24,7 @@ export default function Layout() {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
         <header className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
-          <span className="text-sm text-gray-500">배관일감 관리자 패널</span>
+          <span className="text-sm text-gray-500">설비구함 관리자 패널</span>
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-gray-700">{user.name || '관리자'}</span>
             <button
