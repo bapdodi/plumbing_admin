@@ -3,16 +3,25 @@ import api from '../api/client'
 import { useAdminList, runAction } from '../hooks/useAdminList'
 import { Table, Pagination } from '../components/Table'
 import Badge from '../components/Badge'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 export default function VendorsPage() {
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('false') // 'false' = pending, 'true' = approved, '' = all
+  const [confirm, setConfirm] = useState(null) // 삭제 확인 대상 업체
   const { data: vendors, error, reload } = useAdminList('/admin/vendors', {
     page, size: 20, ...(filter !== '' && { approved: filter }),
   })
 
   const approve = (id) => runAction(() => api.put(`/admin/vendors/${id}/approve`), reload)
   const reject = (id) => runAction(() => api.put(`/admin/vendors/${id}/reject`), reload)
+
+  async function confirmDelete() {
+    if (!confirm) return
+    if (await runAction(() => api.delete(`/admin/vendors/${confirm.id}`), reload, '삭제 실패')) {
+      setConfirm(null)
+    }
+  }
 
   const columns = [
     { key: 'name',    label: '업체명' },
@@ -45,11 +54,17 @@ export default function VendorsPage() {
           {row.approved && (
             <button
               onClick={() => reject(row.id)}
-              className="px-2.5 py-1 text-xs rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+              className="px-2.5 py-1 text-xs rounded border border-amber-300 text-amber-600 hover:bg-amber-50 transition-colors"
             >
               승인 취소
             </button>
           )}
+          <button
+            onClick={() => setConfirm(row)}
+            className="px-2.5 py-1 text-xs rounded border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+          >
+            삭제
+          </button>
         </div>
       ),
     },
@@ -89,6 +104,14 @@ export default function VendorsPage() {
           {/* 응답이 배열이라 전체 건수를 알 수 없어, 받은 행이 size 미만이면 다음 페이지를 비활성화한다. */}
           <Pagination page={page} totalPages={page + (vendors.length === 20 ? 2 : 1)} onChange={setPage} />
         </>
+      )}
+
+      {confirm && (
+        <ConfirmDialog
+          message={`"${confirm.name}" 업체를 삭제할까요? 삭제하면 복구할 수 없습니다.`}
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirm(null)}
+        />
       )}
     </div>
   )
