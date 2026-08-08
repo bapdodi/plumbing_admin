@@ -9,7 +9,6 @@ const CATEGORY_LABELS = {
   leak: '누수', boiler: '보일러', pipe: '배관', hvac: '냉난방', electric: '전기', other: '기타',
 }
 const STATUS_VARIANTS = { open: 'success', done: 'gray' }
-const TYPE_LABELS = { workRequest: '일감 요청', workerAvailable: '인력 제공' }
 
 export default function JobsPage() {
   const [page, setPage] = useState(0)
@@ -31,19 +30,9 @@ export default function JobsPage() {
     { key: 'authorName', label: '작성자' },
     { key: 'category',   label: '분류', render: (v) => CATEGORY_LABELS[v] || v },
     {
-      key: 'type',
-      label: '유형',
-      render: (v) => <Badge label={TYPE_LABELS[v] || v} variant="info" />,
-    },
-    {
       key: 'status',
       label: '상태',
       render: (v) => <Badge label={v === 'open' ? '모집 중' : '마감'} variant={STATUS_VARIANTS[v] || 'gray'} />,
-    },
-    {
-      key: 'urgent',
-      label: '긴급',
-      render: (v) => v ? <Badge label="긴급" variant="danger" /> : '—',
     },
     { key: 'district',   label: '지역' },
     { key: 'createdAt',  label: '등록일', render: (v) => v?.slice(0, 10) },
