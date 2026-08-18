@@ -1,17 +1,19 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
-import LoginPage from './pages/LoginPage'
-import DashboardPage from './pages/DashboardPage'
-import UsersPage from './pages/UsersPage'
-import JobsPage from './pages/JobsPage'
-import PostsPage from './pages/PostsPage'
-import VendorsPage from './pages/VendorsPage'
-import BuildingsPage from './pages/BuildingsPage'
-import DongsPage from './pages/DongsPage'
-import ReportsPage from './pages/ReportsPage'
-import InquiriesPage from './pages/InquiriesPage'
-import BlocksPage from './pages/BlocksPage'
-import AppVersionPage from './pages/AppVersionPage'
+
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const UsersPage = lazy(() => import('./pages/UsersPage'))
+const JobsPage = lazy(() => import('./pages/JobsPage'))
+const PostsPage = lazy(() => import('./pages/PostsPage'))
+const VendorsPage = lazy(() => import('./pages/VendorsPage'))
+const BuildingsPage = lazy(() => import('./pages/BuildingsPage'))
+const DongsPage = lazy(() => import('./pages/DongsPage'))
+const ReportsPage = lazy(() => import('./pages/ReportsPage'))
+const InquiriesPage = lazy(() => import('./pages/InquiriesPage'))
+const BlocksPage = lazy(() => import('./pages/BlocksPage'))
+const AppVersionPage = lazy(() => import('./pages/AppVersionPage'))
 
 function RequireAuth({ children }) {
   const token = localStorage.getItem('admin_token')
@@ -21,6 +23,7 @@ function RequireAuth({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <Suspense fallback={<div className="p-8 text-gray-400">로딩 중...</div>}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route
@@ -44,6 +47,7 @@ export default function App() {
           <Route path="app-version" element={<AppVersionPage />} />
         </Route>
       </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

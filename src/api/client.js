@@ -14,7 +14,7 @@ api.interceptors.request.use((config) => {
 
 let refreshInFlight = null
 
-async function refreshAccessToken() {
+export async function refreshAccessToken() {
   if (refreshInFlight) return refreshInFlight
   const refreshToken = localStorage.getItem('admin_refresh_token')
   if (!refreshToken) return null
@@ -54,7 +54,7 @@ api.interceptors.response.use(
                        original?.url?.includes('/auth/refresh') ||
                        original?.url?.includes('/auth/logout')
 
-    if ((status === 401 || status === 403) && !original._retried && !isAuthCall) {
+    if (status === 401 && !original._retried && !isAuthCall) {
       original._retried = true
       const newToken = await refreshAccessToken()
       if (newToken) {
@@ -64,7 +64,7 @@ api.interceptors.response.use(
       }
     }
 
-    if (status === 401 || status === 403) {
+    if (status === 401) {
       localStorage.removeItem('admin_token')
       localStorage.removeItem('admin_refresh_token')
       localStorage.removeItem('admin_user')

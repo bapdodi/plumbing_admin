@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import api from '../api/client'
 
 /**
@@ -9,20 +9,31 @@ import api from '../api/client'
 export function useAdminList(path, params) {
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
+  const controllerRef = useRef(null)
   // params 는 매 렌더마다 새 객체라 값 기준(JSON)으로 비교한다.
   const paramsKey = JSON.stringify(params ?? {})
 
   const load = useCallback(async () => {
+    controllerRef.current?.abort()
+    const controller = new AbortController()
+    controllerRef.current = controller
     try {
-      const r = await api.get(path, { params: JSON.parse(paramsKey) })
+      const r = await api.get(path, {
+        params: JSON.parse(paramsKey),
+        signal: controller.signal,
+      })
       setData(r.data.data)
       setError('')
     } catch (e) {
+      if (e.code === 'ERR_CANCELED') return
       setError(e.response?.data?.error || '불러오기 실패')
     }
   }, [path, paramsKey])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+    return () => controllerRef.current?.abort()
+  }, [load])
 
   return { data, error, reload: load }
 }
