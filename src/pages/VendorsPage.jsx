@@ -9,9 +9,10 @@ export default function VendorsPage() {
   const [page, setPage] = useState(0)
   const [filter, setFilter] = useState('false') // 'false' = pending, 'true' = approved, '' = all
   const [confirm, setConfirm] = useState(null) // 삭제 확인 대상 업체
-  const { data: vendors, error, reload } = useAdminList('/admin/vendors', {
+  const { data, error, reload } = useAdminList('/admin/vendors/page', {
     page, size: 20, ...(filter !== '' && { approved: filter }),
   })
+  const vendors = data?.content
 
   const approve = (id) => runAction(() => api.put(`/admin/vendors/${id}/approve`), reload)
   const reject = (id) => runAction(() => api.put(`/admin/vendors/${id}/reject`), reload)
@@ -101,8 +102,7 @@ export default function VendorsPage() {
       ) : (
         <>
           <Table columns={columns} rows={vendors} />
-          {/* 응답이 배열이라 전체 건수를 알 수 없어, 받은 행이 size 미만이면 다음 페이지를 비활성화한다. */}
-          <Pagination page={page} totalPages={page + (vendors.length === 20 ? 2 : 1)} onChange={setPage} />
+          <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
         </>
       )}
 

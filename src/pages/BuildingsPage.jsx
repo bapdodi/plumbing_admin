@@ -8,7 +8,8 @@ import AuthImage from '../components/AuthImage'
 export default function BuildingsPage() {
   const [page, setPage] = useState(0)
   const [selectedBuilding, setSelectedBuilding] = useState(null)
-  const { data: buildings, error, reload } = useAdminList('/admin/buildings', { page, size: 20 })
+  const { data, error, reload } = useAdminList('/admin/buildings/page', { page, size: 20 })
+  const buildings = data?.content
 
   async function remove(id) {
     if (!window.confirm('정말로 이 건물을 삭제하시겠습니까? 관련 동 정보도 모두 삭제됩니다.')) return
@@ -53,8 +54,7 @@ export default function BuildingsPage() {
       ) : (
         <>
           <Table columns={columns} rows={buildings} />
-          {/* 응답이 배열이라 전체 건수를 알 수 없어, 받은 행이 size 미만이면 다음 페이지를 비활성화한다. */}
-          <Pagination page={page} totalPages={page + (buildings.length === 20 ? 2 : 1)} onChange={setPage} />
+          <Pagination page={page} totalPages={data.totalPages} onChange={setPage} />
         </>
       )}
 
