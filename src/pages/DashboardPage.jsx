@@ -40,6 +40,12 @@ export default function DashboardPage() {
           color={stats?.pendingDongs > 0 ? 'text-warning' : 'text-primary'}
         />
         <StatCard
+          label="사업자 인증 대기"
+          value={stats?.pendingBusinesses}
+          to="/businesses"
+          color={stats?.pendingBusinesses > 0 ? 'text-warning' : 'text-primary'}
+        />
+        <StatCard
           label="미처리 신고"
           value={stats?.pendingReports}
           to="/reports"
