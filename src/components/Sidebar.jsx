@@ -8,6 +8,8 @@ const NAV = [
   { to: '/vendors',  label: '업체 승인',   icon: '🏪' },
   { to: '/buildings',label: '건물 승인',   icon: '🏢' },
   { to: '/dongs',    label: '동(평면도) 승인',icon: '🏗️' },
+  { to: '/businesses', label: '사업자 인증', icon: '🪪' },
+  { to: '/hire-posts', label: '구인 공고 관리', icon: '👷' },
   { to: '/reports',  label: '신고 처리',   icon: '🚨' },
   { to: '/inquiries',label: '문의 관리',   icon: '💬' },
   { to: '/blocks',   label: '차단 관리',   icon: '🚫' },

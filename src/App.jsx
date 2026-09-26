@@ -10,6 +10,8 @@ const PostsPage = lazy(() => import('./pages/PostsPage'))
 const VendorsPage = lazy(() => import('./pages/VendorsPage'))
 const BuildingsPage = lazy(() => import('./pages/BuildingsPage'))
 const DongsPage = lazy(() => import('./pages/DongsPage'))
+const BusinessVerificationsPage = lazy(() => import('./pages/BusinessVerificationsPage'))
+const HirePostsPage = lazy(() => import('./pages/HirePostsPage'))
 const ReportsPage = lazy(() => import('./pages/ReportsPage'))
 const InquiriesPage = lazy(() => import('./pages/InquiriesPage'))
 const BlocksPage = lazy(() => import('./pages/BlocksPage'))
@@ -41,6 +43,8 @@ export default function App() {
           <Route path="vendors" element={<VendorsPage />} />
           <Route path="buildings" element={<BuildingsPage />} />
           <Route path="dongs" element={<DongsPage />} />
+          <Route path="businesses" element={<BusinessVerificationsPage />} />
+          <Route path="hire-posts" element={<HirePostsPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="inquiries" element={<InquiriesPage />} />
           <Route path="blocks" element={<BlocksPage />} />
